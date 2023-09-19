@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_todo/home/home_screen.dart';
+import 'package:project_todo/home/todo_list_screen/edit_task_screen.dart';
 import 'package:project_todo/mytheme.dart';
 
 void main() {
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
         initialRoute: HomeScreen.routeNam,
         routes: {
           HomeScreen.routeNam: (context) => HomeScreen(),
+          EditTaskScreen.routeNam: (context) => EditTaskScreen()
         },
         theme: MyTheme.LightMode);
   }
