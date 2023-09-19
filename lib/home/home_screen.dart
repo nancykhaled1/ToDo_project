@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project_todo/home/bottom_sheet.dart';
 import 'package:project_todo/home/settings_screen/settings_screen.dart';
-import 'package:project_todo/home/todo_list_screen/bottom_sheet.dart';
 import 'package:project_todo/home/todo_list_screen/todolist_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           showBottomSheet();
         },
