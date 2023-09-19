@@ -31,6 +31,7 @@ class MyTheme {
           style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
         shape: StadiumBorder(),
+         ///   fixedSize: Size(100, 50)
       )),
       textTheme: TextTheme(
           titleLarge: TextStyle(

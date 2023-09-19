@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:project_todo/home/todo_list_screen/edit_task_screen.dart';
 import 'package:project_todo/mytheme.dart';
 
 class ListItem extends StatelessWidget {
@@ -26,55 +27,60 @@ class ListItem extends StatelessWidget {
               ),
             ],
           ),
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: MyTheme.whiteColor),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                  width: MediaQuery.of(context).size.width * 0.01,
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  decoration: BoxDecoration(
-                    color: MyTheme.primaryColor,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 40,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Task',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(color: MyTheme.primaryColor),
-                        ),
-                        Text('Des',
-                            style: Theme.of(context).textTheme.titleSmall),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(20),
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                  decoration: BoxDecoration(
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).pushNamed(EditTaskScreen.routeNam);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: MyTheme.whiteColor),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                    width: MediaQuery.of(context).size.width * 0.01,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    decoration: BoxDecoration(
                       color: MyTheme.primaryColor,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Icon(
-                    Icons.check,
-                    size: 30,
-                    color: MyTheme.whiteColor,
+                    ),
                   ),
-                )
-              ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 40,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Task',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(color: MyTheme.primaryColor),
+                          ),
+                          Text('Des',
+                              style: Theme.of(context).textTheme.titleSmall),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(20),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    decoration: BoxDecoration(
+                        color: MyTheme.primaryColor,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Icon(
+                      Icons.check,
+                      size: 30,
+                      color: MyTheme.whiteColor,
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
