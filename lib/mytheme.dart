@@ -31,7 +31,6 @@ class MyTheme {
           style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
         shape: StadiumBorder(),
-         ///   fixedSize: Size(100, 50)
       )),
       textTheme: TextTheme(
           titleLarge: TextStyle(
@@ -49,4 +48,42 @@ class MyTheme {
             fontWeight: FontWeight.w400,
             color: blackColor,
           )));
+  static ThemeData DarkMode = ThemeData(
+    primaryColor: primaryColor,
+    scaffoldBackgroundColor: primaryDarkColor,
+    appBarTheme: AppBarTheme(color: primaryColor),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      selectedItemColor: primaryColor,
+      unselectedItemColor: whiteColor,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+        shape: StadiumBorder(
+            side: BorderSide(
+      color: whiteColor,
+      width: 4,
+    ))),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+      backgroundColor: primaryColor,
+      shape: StadiumBorder(),
+    )),
+    textTheme: TextTheme(
+        titleLarge: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: whiteColor,
+        ),
+        titleMedium: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: blackColor,
+        ),
+        titleSmall: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+          color: blackColor,
+        )),
+  );
 }

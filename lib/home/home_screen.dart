@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:project_todo/home/bottom_sheet.dart';
 import 'package:project_todo/home/settings_screen/settings_screen.dart';
 import 'package:project_todo/home/todo_list_screen/todolist_screen.dart';
+import 'package:project_todo/mytheme.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/app_config_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeNam = 'home_screen';
@@ -16,31 +21,43 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<AppConfigProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'ToDo List',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        title: Text(AppLocalizations.of(context)!.app_title,
+            style: provider.appTheme == ThemeMode.light
+                ? Theme.of(context).textTheme.titleLarge
+                : Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(color: MyTheme.primaryDarkColor)),
       ),
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         notchMargin: 8,
         child: BottomNavigationBar(
+          backgroundColor: provider.appTheme == ThemeMode.light
+              ? MyTheme.whiteColor
+              : MyTheme.darkBlackColor,
           currentIndex: selectedIndex,
           onTap: (index) {
             selectedIndex = index;
             setState(() {});
           },
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Todo_List'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: 'Settings'),
+                icon: Icon(Icons.list),
+                label: AppLocalizations.of(context)!.todo_list),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: AppLocalizations.of(context)!.settings),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: provider.appTheme == ThemeMode.light
+            ? Theme.of(context).primaryColor
+            : Theme.of(context).primaryColor,
         onPressed: () {
           showBottomSheet();
         },
