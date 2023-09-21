@@ -1,0 +1,21 @@
+{
+"app_title" : "قائمه المهام",
+"todo_list":"قائمه المهام",
+"settings" : "الاعدادات",
+"addnewtask" : "اضافه مهمه جديده",
+"entertask" : "ادخل المهمه",
+"enterdescription" : "ادخل وصف المهمه",
+"selectdate" : "اختار التاريخ",
+"add" : "اضافه",
+"theming" : "النمط",
+"Language" : "اللغه",
+"light" : "مضئ",
+"dark" : "ليلى",
+"arabic" : "العربيه",
+"english" : "الانجليزيه",
+"pleaseentertask" : "من فضلك ادخل المهمه",
+"pleaseentertaskdescription" : "من فضلك ادخل وصف المهمه",
+"edittask" : "تعديل المهمه",
+"savechanges" : "حفظ التغيرات"
+
+}

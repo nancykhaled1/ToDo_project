@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:project_todo/home/todo_list_screen/edit_task_screen.dart';
 import 'package:project_todo/mytheme.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/app_config_provider.dart';
 
 class ListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<AppConfigProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: ClipRRect(
@@ -34,7 +38,9 @@ class ListItem extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: MyTheme.whiteColor),
+                  color: provider.appTheme == ThemeMode.light
+                      ? MyTheme.whiteColor
+                      : MyTheme.darkBlackColor),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

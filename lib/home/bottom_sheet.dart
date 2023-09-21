@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:project_todo/mytheme.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/app_config_provider.dart';
 
 class ShowBottomSheet extends StatefulWidget {
   @override
@@ -12,13 +16,22 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<AppConfigProvider>(context);
     return Container(
+      color: provider.appTheme == ThemeMode.light
+          ? MyTheme.whiteColor
+          : MyTheme.darkBlackColor,
       padding: EdgeInsets.all(15),
       child: Column(
         children: [
           Text(
-            'Add New Task',
-            style: Theme.of(context).textTheme.titleMedium,
+            AppLocalizations.of(context)!.addnewtask,
+            style: provider.appTheme == ThemeMode.light
+                ? Theme.of(context).textTheme.titleMedium
+                : Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: MyTheme.whiteColor),
           ),
           Form(
               key: formKey,
@@ -30,13 +43,19 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                     child: TextFormField(
                       validator: (String? value) {
                         if (value!.isEmpty || value == null) {
-                          return 'please enter task';
+                          return AppLocalizations.of(context)!.pleaseentertask;
                         } else {
                           return null;
                         }
                       },
                       decoration: InputDecoration(
-                        hintText: 'Enter your task',
+                        hintText: AppLocalizations.of(context)!.entertask,
+                        hintStyle: provider.appTheme == ThemeMode.light
+                            ? Theme.of(context).textTheme.titleMedium
+                            : Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(color: MyTheme.whiteColor),
                       ),
                     ),
                   ),
@@ -45,13 +64,21 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                     child: TextFormField(
                       validator: (String? value) {
                         if (value!.isEmpty || value == null) {
-                          return 'please enter task description';
+                          return AppLocalizations.of(context)!
+                              .pleaseentertaskdescription;
                         } else {
                           return null;
                         }
                       },
                       decoration: InputDecoration(
-                        hintText: 'Enter your task description',
+                        hintText:
+                            AppLocalizations.of(context)!.enterdescription,
+                        hintStyle: provider.appTheme == ThemeMode.light
+                            ? Theme.of(context).textTheme.titleMedium
+                            : Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(color: MyTheme.whiteColor),
                       ),
                       maxLines: 4,
                     ),
@@ -59,8 +86,13 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Select Date',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      AppLocalizations.of(context)!.selectdate,
+                      style: provider.appTheme == ThemeMode.light
+                          ? Theme.of(context).textTheme.titleSmall
+                          : Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(color: MyTheme.whiteColor),
                     ),
                   ),
                   Padding(
@@ -71,7 +103,12 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                       },
                       child: Text(
                         '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                        style: Theme.of(context).textTheme.titleSmall,
+                        style: provider.appTheme == ThemeMode.light
+                            ? Theme.of(context).textTheme.titleSmall
+                            : Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(color: MyTheme.whiteColor),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -82,12 +119,11 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                         setState(() {});
                       },
                       child: Text(
-                        'Add',
-                        style:
-                            Theme.of(context).textTheme.titleMedium!.copyWith(
-                                  color: MyTheme.whiteColor,
-                                ),
-                      )),
+                          AppLocalizations.of(context)!.add,
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    color: MyTheme.whiteColor,
+                                  ))),
                 ],
               ))
         ],
