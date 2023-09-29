@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:project_todo/firebase_utils/firebase_utils.dart';
+import 'package:project_todo/firebase_utils/model.dart';
 import 'package:project_todo/mytheme.dart';
 import 'package:provider/provider.dart';
 
@@ -14,12 +16,17 @@ class EditTaskScreen extends StatefulWidget {
 
 class _EditTaskScreenState extends State<EditTaskScreen> {
   DateTime selectedDate = DateTime.now();
-
   var formKey = GlobalKey<FormState>();
+  String title = '';
+  String description = '';
+
+  /// String id = '1';
 
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppConfigProvider>(context);
+    Task taskdata = ModalRoute.of(context)!.settings.arguments as Task;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -71,7 +78,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                             }
                           },
                           decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context)!.entertask,
+                            ///  hintText: AppLocalizations.of(context)!.entertask,
+                            hintText: taskdata.title,
                             hintStyle: provider.appTheme == ThemeMode.light
                                 ? Theme.of(context).textTheme.titleMedium
                                 : Theme.of(context)
@@ -93,8 +101,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                             }
                           },
                           decoration: InputDecoration(
-                            hintText:
-                                AppLocalizations.of(context)!.enterdescription,
+                            hintText: taskdata.description,
                             hintStyle: provider.appTheme == ThemeMode.light
                                 ? Theme.of(context).textTheme.titleMedium
                                 : Theme.of(context)
@@ -124,7 +131,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                             showDate();
                           },
                           child: Text(
-                            '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                            '${taskdata.dateTime?.day}/${taskdata.dateTime?.month}/${taskdata.dateTime?.year}',
                             style: provider.appTheme == ThemeMode.light
                                 ? Theme.of(context).textTheme.titleSmall
                                 : Theme.of(context)
@@ -142,8 +149,18 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                         ),
                         child: ElevatedButton(
                           onPressed: () {
-                            addTask();
-                            setState(() {});
+                            if (formKey.currentState!.validate() == true) {
+                              /// update task to firebase
+                              Task task = Task(
+                                  dateTime: selectedDate,
+                                  title: title,
+                                  description: description,
+                                  id: taskdata.id);
+                              FirebaseUtils.updateTask(task).timeout(
+                                  Duration(milliseconds: 500), onTimeout: () {
+                                print('task updated successfully');
+                              });
+                            }
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
@@ -180,11 +197,5 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     }
 
     setState(() {});
-  }
-
-  void addTask() {
-    if (formKey.currentState!.validate() == true) {
-      /// add task to firebase
-    }
   }
 }

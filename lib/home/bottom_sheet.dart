@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project_todo/firebase_utils/firebase_utils.dart';
+import 'package:project_todo/firebase_utils/model.dart';
 import 'package:project_todo/mytheme.dart';
 import 'package:provider/provider.dart';
 
@@ -13,10 +16,13 @@ class ShowBottomSheet extends StatefulWidget {
 class _ShowBottomSheetState extends State<ShowBottomSheet> {
   DateTime selectedDate = DateTime.now();
   var formKey = GlobalKey<FormState>();
+  String title = '';
+  String description = '';
+  late AppConfigProvider provider;
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<AppConfigProvider>(context);
+    provider = Provider.of<AppConfigProvider>(context);
     return Container(
       color: provider.appTheme == ThemeMode.light
           ? MyTheme.whiteColor
@@ -41,6 +47,9 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      onChanged: (text) {
+                        title = text;
+                      },
                       validator: (String? value) {
                         if (value!.isEmpty || value == null) {
                           return AppLocalizations.of(context)!.pleaseentertask;
@@ -53,15 +62,18 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                         hintStyle: provider.appTheme == ThemeMode.light
                             ? Theme.of(context).textTheme.titleMedium
                             : Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(color: MyTheme.whiteColor),
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(color: MyTheme.whiteColor),
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      onChanged: (text) {
+                        description = text;
+                      },
                       validator: (String? value) {
                         if (value!.isEmpty || value == null) {
                           return AppLocalizations.of(context)!
@@ -72,13 +84,13 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                       },
                       decoration: InputDecoration(
                         hintText:
-                            AppLocalizations.of(context)!.enterdescription,
+                        AppLocalizations.of(context)!.enterdescription,
                         hintStyle: provider.appTheme == ThemeMode.light
                             ? Theme.of(context).textTheme.titleMedium
                             : Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(color: MyTheme.whiteColor),
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(color: MyTheme.whiteColor),
                       ),
                       maxLines: 4,
                     ),
@@ -134,7 +146,7 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
   void showDate() async {
     var chosenDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: selectedDate,
       firstDate: DateTime.now().subtract(Duration(days: 365)),
       lastDate: DateTime.now().add(Duration(days: 365)),
     );
@@ -148,6 +160,24 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
   void addTask() {
     if (formKey.currentState!.validate() == true) {
       /// add task to firebase
+      Task task = Task(
+          dateTime: selectedDate, title: title, description: description);
+      FirebaseUtils.addTaskToFireStore(task).timeout(
+          Duration(milliseconds: 500),
+          onTimeout: () {
+            Fluttertoast.showToast(
+                msg: "task added successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: MyTheme.primaryColor,
+                textColor: Colors.white,
+                fontSize: 16.0
+            );
+            provider.getAllTasksFromFirestore();
+            Navigator.pop(context);
+          }
+      );
     }
   }
 }

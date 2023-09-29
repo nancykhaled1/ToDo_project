@@ -6,10 +6,20 @@ import 'package:provider/provider.dart';
 import '../../providers/app_config_provider.dart';
 import 'List_item.dart';
 
-class TodoTab extends StatelessWidget {
+class TodoTab extends StatefulWidget {
+  @override
+  State<TodoTab> createState() => _TodoTabState();
+}
+
+class _TodoTabState extends State<TodoTab> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AppConfigProvider>(context);
+
+    if (provider.tasksList.isEmpty) {
+      provider.getAllTasksFromFirestore();
+    }
+
     return Container(
       child: Column(
         children: [
@@ -34,8 +44,10 @@ class TodoTab extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemBuilder: (context, index) => ListItem(),
-              itemCount: 20,
+              itemBuilder: (context, index) => ListItem(
+                task: provider.tasksList[index],
+              ),
+              itemCount: provider.tasksList.length,
             ),
           )
         ],
