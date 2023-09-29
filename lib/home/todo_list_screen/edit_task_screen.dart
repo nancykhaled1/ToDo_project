@@ -160,6 +160,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                                   Duration(milliseconds: 500), onTimeout: () {
                                 print('task updated successfully');
                               });
+                              provider.getAllTasksFromFirestore();
                             }
                           },
                           child: Padding(
@@ -195,7 +196,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     if (chosenDate != null) {
       selectedDate = chosenDate;
     }
-
     setState(() {});
   }
 }
