@@ -16,6 +16,15 @@
 "pleaseentertask" : "please enter task",
 "pleaseentertaskdescription" : "please enter task description",
 "edittask" : "Edit Task",
-"savechanges" : "Save Changes"
+"savechanges" : "Save Changes",
+"username" : "UserName",
+"email" : "Email",
+"password" : "Password",
+"confirmPass" : "Confirmation Password",
+"register" : "Register",
+"alreadyhaveanaccount" : "Already have an account",
+"login" : "Login",
+"noaccount" : "Don't have an account ?",
+"signup" : "Sign Up"
 
 }

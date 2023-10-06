@@ -3,7 +3,7 @@ class Task {
   String? title;
   String? description;
   DateTime? dateTime;
-  bool isDone;
+  bool? isDone;
 
   Task(
       {required this.dateTime,
@@ -18,7 +18,8 @@ class Task {
             title: data['title'] as String?,
             dateTime: DateTime.fromMillisecondsSinceEpoch(data['datetime'])
                 as DateTime?,
-            description: data['description'] as String?);
+            description: data['description'] as String?,
+            isDone: data['isdone'] as bool?);
 
   Map<String, dynamic> toFireStore() {
     return {

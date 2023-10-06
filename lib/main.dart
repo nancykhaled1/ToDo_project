@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -6,16 +5,26 @@ import 'package:project_todo/home/home_screen.dart';
 import 'package:project_todo/home/todo_list_screen/edit_task_screen.dart';
 import 'package:project_todo/mytheme.dart';
 import 'package:project_todo/providers/app_config_provider.dart';
+import 'package:project_todo/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
+
+import 'auth/login/login_screen.dart';
+import 'auth/register/register_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseFirestore.instance.settings =
-      Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
-  await FirebaseFirestore.instance.disableNetwork();
-  runApp(ChangeNotifierProvider(
-      create: (context) => AppConfigProvider(), child: MyApp()));
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => AppConfigProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => AuthProvider(),
+      )
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -24,10 +33,14 @@ class MyApp extends StatelessWidget {
     var provider = Provider.of<AppConfigProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: HomeScreen.routeNam,
+      initialRoute: RegisterScreen.routeNam,
+
+      ///HomeScreen.routeNam,
       routes: {
         HomeScreen.routeNam: (context) => HomeScreen(),
-        EditTaskScreen.routeNam: (context) => EditTaskScreen()
+        EditTaskScreen.routeNam: (context) => EditTaskScreen(),
+        RegisterScreen.routeNam: (context) => RegisterScreen(),
+        LoginScreen.routeNam: (context) => LoginScreen()
       },
       theme: MyTheme.LightMode,
       darkTheme: MyTheme.DarkMode,

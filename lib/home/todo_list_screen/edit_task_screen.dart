@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:project_todo/firebase_utils/firebase_utils.dart';
-import 'package:project_todo/firebase_utils/model.dart';
+import 'package:project_todo/home/home_screen.dart';
+import 'package:project_todo/model/task_data.dart';
 import 'package:project_todo/mytheme.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/app_config_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class EditTaskScreen extends StatefulWidget {
   static const routeNam = 'edit_task';
@@ -15,17 +17,22 @@ class EditTaskScreen extends StatefulWidget {
 }
 
 class _EditTaskScreenState extends State<EditTaskScreen> {
-  DateTime selectedDate = DateTime.now();
+  DateTime? selectedDate;
+
   var formKey = GlobalKey<FormState>();
   String title = '';
   String description = '';
 
-  /// String id = '1';
-
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
     var provider = Provider.of<AppConfigProvider>(context);
     Task taskdata = ModalRoute.of(context)!.settings.arguments as Task;
+    title = taskdata.title!;
+    description = taskdata.description!;
+    if (selectedDate == null) {
+      selectedDate = taskdata.dateTime!;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -54,9 +61,9 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                   style: provider.appTheme == ThemeMode.light
                       ? Theme.of(context).textTheme.titleMedium
                       : Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(color: MyTheme.whiteColor),
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: MyTheme.whiteColor),
                 ),
                 SizedBox(
                   height: 30,
@@ -69,6 +76,16 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
+                          initialValue: taskdata.title,
+                          style: TextStyle(
+                            color: provider.appTheme == ThemeMode.light
+                                ? MyTheme.blackColor
+                                : MyTheme.whiteColor,
+                          ),
+                          onChanged: (text) {
+                            taskdata.title = text;
+                            setState(() {});
+                          },
                           validator: (String? value) {
                             if (value!.isEmpty || value == null) {
                               return AppLocalizations.of(context)!
@@ -78,20 +95,28 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                             }
                           },
                           decoration: InputDecoration(
-                            ///  hintText: AppLocalizations.of(context)!.entertask,
-                            hintText: taskdata.title,
                             hintStyle: provider.appTheme == ThemeMode.light
                                 ? Theme.of(context).textTheme.titleMedium
                                 : Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(color: MyTheme.whiteColor),
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(color: MyTheme.whiteColor),
                           ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
+                          initialValue: taskdata.description,
+                          style: TextStyle(
+                            color: provider.appTheme == ThemeMode.light
+                                ? MyTheme.blackColor
+                                : MyTheme.whiteColor,
+                          ),
+                          onChanged: (text) {
+                            taskdata.description = text;
+                            setState(() {});
+                          },
                           validator: (String? value) {
                             if (value!.isEmpty || value == null) {
                               return AppLocalizations.of(context)!
@@ -101,13 +126,13 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                             }
                           },
                           decoration: InputDecoration(
-                            hintText: taskdata.description,
+                            ///  hintText: taskdata.description,
                             hintStyle: provider.appTheme == ThemeMode.light
                                 ? Theme.of(context).textTheme.titleMedium
                                 : Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(color: MyTheme.whiteColor),
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(color: MyTheme.whiteColor),
                           ),
                           maxLines: 4,
                         ),
@@ -119,9 +144,9 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                           style: provider.appTheme == ThemeMode.light
                               ? Theme.of(context).textTheme.titleMedium
                               : Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(color: MyTheme.whiteColor),
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: MyTheme.whiteColor),
                         ),
                       ),
                       Padding(
@@ -131,7 +156,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                             showDate();
                           },
                           child: Text(
-                            '${taskdata.dateTime?.day}/${taskdata.dateTime?.month}/${taskdata.dateTime?.year}',
+                            /// '${taskdata.dateTime?.day}/${taskdata.dateTime?.month}/${taskdata.dateTime?.year}',
+                            '${selectedDate?.day}/${selectedDate?.month}/${selectedDate?.year}',
                             style: provider.appTheme == ThemeMode.light
                                 ? Theme.of(context).textTheme.titleSmall
                                 : Theme.of(context)
@@ -156,11 +182,16 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                                   title: title,
                                   description: description,
                                   id: taskdata.id);
-                              FirebaseUtils.updateTask(task).timeout(
-                                  Duration(milliseconds: 500), onTimeout: () {
+                              FirebaseUtils.updateTask(
+                                      task, authProvider.currentUser!.id!)
+                                  .timeout(Duration(milliseconds: 500),
+                                      onTimeout: () {
                                 print('task updated successfully');
                               });
-                              provider.getAllTasksFromFirestore();
+                              provider.getAllTasksFromFirestore(
+                                  authProvider.currentUser!.id!);
+                              Navigator.pushReplacementNamed(
+                                  context, HomeScreen.routeNam);
                             }
                           },
                           child: Padding(
@@ -171,8 +202,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                                   .textTheme
                                   .titleMedium!
                                   .copyWith(
-                                    color: MyTheme.whiteColor,
-                                  ),
+                                color: MyTheme.whiteColor,
+                              ),
                             ),
                           ),
                         ),
@@ -189,13 +220,14 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   void showDate() async {
     var chosenDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: selectedDate!,
       firstDate: DateTime.now().subtract(Duration(days: 365)),
       lastDate: DateTime.now().add(Duration(days: 365)),
     );
     if (chosenDate != null) {
       selectedDate = chosenDate;
     }
+
     setState(() {});
   }
 }

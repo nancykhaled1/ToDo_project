@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project_todo/dialog_utils.dart';
 import 'package:project_todo/firebase_utils/firebase_utils.dart';
-import 'package:project_todo/firebase_utils/model.dart';
+import 'package:project_todo/model/task_data.dart';
 import 'package:project_todo/mytheme.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/app_config_provider.dart';
+import '../providers/auth_provider.dart';
 
 class ShowBottomSheet extends StatefulWidget {
   @override
@@ -23,6 +24,8 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
   @override
   Widget build(BuildContext context) {
     provider = Provider.of<AppConfigProvider>(context);
+    var authProvider = Provider.of<AuthProvider>(context);
+
     return Container(
       color: provider.appTheme == ThemeMode.light
           ? MyTheme.whiteColor
@@ -84,13 +87,13 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
                       },
                       decoration: InputDecoration(
                         hintText:
-                        AppLocalizations.of(context)!.enterdescription,
+                            AppLocalizations.of(context)!.enterdescription,
                         hintStyle: provider.appTheme == ThemeMode.light
                             ? Theme.of(context).textTheme.titleMedium
                             : Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(color: MyTheme.whiteColor),
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(color: MyTheme.whiteColor),
                       ),
                       maxLines: 4,
                     ),
@@ -160,24 +163,22 @@ class _ShowBottomSheetState extends State<ShowBottomSheet> {
   void addTask() {
     if (formKey.currentState!.validate() == true) {
       /// add task to firebase
-      Task task = Task(
-          dateTime: selectedDate, title: title, description: description);
-      FirebaseUtils.addTaskToFireStore(task).timeout(
-          Duration(milliseconds: 500),
-          onTimeout: () {
-            Fluttertoast.showToast(
-                msg: "task added successfully",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: MyTheme.primaryColor,
-                textColor: Colors.white,
-                fontSize: 16.0
-            );
-            provider.getAllTasksFromFirestore();
-            Navigator.pop(context);
-          }
-      );
+      Task task =
+          Task(dateTime: selectedDate, title: title, description: description);
+      DialogUtils.showLoading(context, 'Loading...');
+      var authProvider = Provider.of<AuthProvider>(context, listen: false);
+      FirebaseUtils.addTaskToFireStore(task, authProvider.currentUser!.id!)
+          .then((value) {
+        DialogUtils.hideLoading(context);
+        DialogUtils.showMessage(context, 'Task added successfully',
+            posActionName: 'Ok', posAction: () {
+          Navigator.pop(context);
+        });
+      }).timeout(Duration(milliseconds: 500), onTimeout: () {
+        print('task added successfully');
+        provider.getAllTasksFromFirestore(authProvider.currentUser!.id!);
+        Navigator.of(context).pop();
+      });
     }
   }
 }

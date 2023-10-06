@@ -6,8 +6,9 @@ import 'package:project_todo/home/todo_list_screen/edit_task_screen.dart';
 import 'package:project_todo/mytheme.dart';
 import 'package:provider/provider.dart';
 
-import '../../firebase_utils/model.dart';
+import '../../model/task_data.dart';
 import '../../providers/app_config_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class ListItem extends StatefulWidget {
   Task task;
@@ -19,8 +20,11 @@ class ListItem extends StatefulWidget {
 }
 
 class _ListItemState extends State<ListItem> {
+  bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
     var provider = Provider.of<AppConfigProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -35,7 +39,8 @@ class _ListItemState extends State<ListItem> {
               SlidableAction(
                 onPressed: (context) {
                   ///delete task
-                  FirebaseUtils.deleteTaskFromFirestore(widget.task)
+                  FirebaseUtils.deleteTaskFromFirestore(
+                      widget.task, authProvider.currentUser!.id!)
                       .timeout(Duration(milliseconds: 500), onTimeout: () {
                     Fluttertoast.showToast(
                         msg: "task deleted successfully",
@@ -45,7 +50,8 @@ class _ListItemState extends State<ListItem> {
                         backgroundColor: MyTheme.primaryColor,
                         textColor: Colors.white,
                         fontSize: 16.0);
-                    provider.getAllTasksFromFirestore();
+                    provider.getAllTasksFromFirestore(
+                        authProvider.currentUser!.id!);
                   });
                 },
                 backgroundColor: MyTheme.redColor,
@@ -58,10 +64,7 @@ class _ListItemState extends State<ListItem> {
           child: InkWell(
             onTap: () {
               Navigator.of(context).pushNamed(EditTaskScreen.routeNam,
-                  arguments: Task(
-                      dateTime: widget.task.dateTime,
-                      title: widget.task.title,
-                      description: widget.task.description));
+                  arguments: widget.task);
             },
             child: Container(
               decoration: BoxDecoration(
@@ -77,7 +80,7 @@ class _ListItemState extends State<ListItem> {
                     width: MediaQuery.of(context).size.width * 0.01,
                     height: MediaQuery.of(context).size.height * 0.1,
                     decoration: BoxDecoration(
-                      color: widget.task.isDone
+                      color: widget.task.isDone!
                           ? MyTheme.greenColor
                           : MyTheme.primaryColor,
                     ),
@@ -92,60 +95,75 @@ class _ListItemState extends State<ListItem> {
                         children: [
                           Text(
                             widget.task.title ?? '',
-                            style: widget.task.isDone
-                                ? Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(color: MyTheme.greenColor)
-                                : Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(color: MyTheme.primaryColor),
+                            style: widget.task.isDone!
+                                ? Theme
+                                .of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(color: MyTheme.greenColor)
+                                : Theme
+                                .of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(color: MyTheme.primaryColor),
                           ),
                           SizedBox(
                             height: 8,
                           ),
                           Text(widget.task.description ?? '',
-                              style: Theme.of(context).textTheme.titleSmall),
+                            style: provider.appTheme == ThemeMode.light ?
+                            Theme
+                                .of(context)
+                                .textTheme
+                                .titleSmall :
+                            Theme
+                                .of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(
+                                color: MyTheme.whiteColor
+                            ),
+
+                          ),
                         ],
                       ),
                     ),
                   ),
                   GestureDetector(
                     onTap: () {
-                      widget.task.isDone = !widget.task.isDone;
-                      FirebaseUtils.updateTask(widget.task).then((_) {
-                        provider.getAllTasksFromFirestore();
-                      });
+                      widget.task.isDone = !widget.task.isDone!;
+                      FirebaseUtils.updateTask(
+                          widget.task, authProvider.currentUser!.id!);
                       setState(() {});
                     },
                     child: widget.task
-                            .isDone // show the "done" text if the task is completed
+                        .isDone! // show the "done" text if the task is completed
                         ? Container(
-                            margin: EdgeInsets.all(20),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 20),
-                            child: Text('Done!',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(
-                                      color: MyTheme.greenColor,
-                                    )),
-                          )
+                      margin: EdgeInsets.all(20),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 20),
+                      child: Text('Done!',
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(
+                            color: MyTheme.greenColor,
+                          )),
+                    )
                         : Container(
-                            margin: EdgeInsets.all(20),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 20),
-                            decoration: BoxDecoration(
-                                color: MyTheme.primaryColor,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Icon(
-                              Icons.check,
-                              size: 30,
-                              color: MyTheme.whiteColor,
-                            ),
-                          ),
+                      margin: EdgeInsets.all(20),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 20),
+                      decoration: BoxDecoration(
+                          color: MyTheme.primaryColor,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Icon(
+                        Icons.check,
+                        size: 30,
+                        color: MyTheme.whiteColor,
+                      ),
+                    ),
                   )
                 ],
               ),

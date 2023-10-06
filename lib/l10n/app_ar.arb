@@ -16,6 +16,15 @@
 "pleaseentertask" : "من فضلك ادخل المهمه",
 "pleaseentertaskdescription" : "من فضلك ادخل وصف المهمه",
 "edittask" : "تعديل المهمه",
-"savechanges" : "حفظ التغيرات"
+"savechanges" : "حفظ التغيرات",
+"username" : "اسم المستخدم",
+"email" : "الايميل",
+"password" : "الرقم السري",
+"confirmPass" : "تاكيد الرقم السري",
+"register" : "تسجيل الدخول",
+"alreadyhaveanaccount" : "بالفعل لديك حساب",
+"login" : "تسجيل الدخول",
+"noaccount" : "ليس لديك حساب ؟ ",
+"signup" : "سجل الدخول"
 
 }

@@ -4,6 +4,7 @@ import 'package:project_todo/mytheme.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/app_config_provider.dart';
+import '../../providers/auth_provider.dart';
 import 'List_item.dart';
 
 class TodoTab extends StatefulWidget {
@@ -14,20 +15,23 @@ class TodoTab extends StatefulWidget {
 class _TodoTabState extends State<TodoTab> {
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
     var provider = Provider.of<AppConfigProvider>(context);
 
     if (provider.tasksList.isEmpty) {
-      provider.getAllTasksFromFirestore();
+      provider.getAllTasksFromFirestore(authProvider.currentUser!.id!);
     }
 
     return Container(
       child: Column(
         children: [
           CalendarTimeline(
-            initialDate: DateTime.now(),
+            initialDate: provider.selectedDate,
             firstDate: DateTime.now().subtract(Duration(days: 365)),
             lastDate: DateTime.now().add(Duration(days: 365)),
-            onDateSelected: (date) => print(date),
+            onDateSelected: (date) {
+              provider.changeSelectDate(date, authProvider.currentUser!.id!);
+            },
             leftMargin: 20,
             monthColor: provider.appTheme == ThemeMode.light
                 ? MyTheme.blackColor
